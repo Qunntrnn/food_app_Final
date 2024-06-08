@@ -1,6 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/my_button.dart';
 import 'package:flutter_application_1/components/my_textfield.dart';
+import 'package:flutter_application_1/services/auth/auth_service.dart';
+
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function()? onTap;
@@ -16,6 +21,40 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
+
+  //login method
+  void login() async {
+    // get instance of auth service
+    final _authService = AuthService();
+    //try sign in
+    try {
+      await _authService.signInWithEmailPassword(
+        emailController.text,
+        passwordController.text,
+      );
+    }
+    // display any errors
+    catch (e) {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text(e.toString()),
+              ));
+    }
+  }
+
+  //fogot password
+  void forgotPw() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        title: const Text("User tapped forgot password"),
+      ),
+    );
+  }
+
+  //navigate to home page
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
           MyTextField(
             controller: emailController,
             hintText: "Email",
-            obscureText: true,
+            obscureText: false,
           ),
           const SizedBox(height: 10),
 
@@ -53,14 +92,14 @@ class _LoginPageState extends State<LoginPage> {
           MyTextField(
             controller: passwordController,
             hintText: "Password",
-            obscureText: false,
+            obscureText: true,
           ),
           const SizedBox(height: 10),
 
           //sign in button
           MyButton(
             text: "Sign in",
-            onTap: () {},
+            onTap: login,
           ),
           const SizedBox(height: 25),
           //not a member?
